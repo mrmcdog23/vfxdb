@@ -14,19 +14,79 @@ const items = [
   { id: 12, name: "Praying Mantis", category: "insect", region: "Africa", tags: ["predator", "camouflage"] },
 ];
 
-// Get the grid container
-const grid = document.getElementById("grid");
+// ── State ──
+let activeCategories = new Set();
+let activeRegions    = new Set();
+let searchQuery      = '';
 
-// Loop through items and build grid cards
-items.forEach(item => {
-  const card = document.createElement("div");
-  card.classList.add("grid-item");
+// ── Build filter chips dynamically from data ──
+const categories = [...new Set(items.map(i => i.category))];
+const regions    = [...new Set(items.map(i => i.region))];
 
+function buildChips(values, containerId, activeSet) {
+const container = document.getElementById(containerId);
+values.forEach(val => {
+  const btn = document.createElement('button');
+  btn.className = 'chip';
+  btn.textContent = val;
+  btn.addEventListener('click', () => {
+    if (activeSet.has(val)) { activeSet.delete(val); btn.classList.remove('active'); }
+    else                    { activeSet.add(val);    btn.classList.add('active');    }
+    renderGrid();
+  });
+  container.appendChild(btn);
+});
+}
+
+buildChips(categories, 'category-chips', activeCategories);
+buildChips(regions,    'region-chips',    activeRegions);
+
+// ── Search input ──
+document.getElementById('search').addEventListener('input', e => {
+searchQuery = e.target.value.toLowerCase().trim();
+renderGrid();
+});
+
+// ── Render ──
+function renderGrid() {
+const grid  = document.getElementById('grid');
+const empty = document.getElementById('empty');
+
+// Filter
+const filtered = items.filter(item => {
+  const matchCat    = activeCategories.size === 0 || activeCategories.has(item.category);
+  const matchRegion = activeRegions.size    === 0 || activeRegions.has(item.region);
+  const matchSearch = !searchQuery ||
+    item.name.toLowerCase().includes(searchQuery) ||
+    item.tags.some(t => t.toLowerCase().includes(searchQuery));
+  return matchCat && matchRegion && matchSearch;
+});
+
+// Clear existing cards (keep empty state node)
+[...grid.querySelectorAll('.card')].forEach(c => c.remove());
+
+document.getElementById('count').textContent = filtered.length;
+
+if (filtered.length === 0) {
+  empty.style.display = 'block';
+  return;
+}
+
+empty.style.display = 'none';
+
+filtered.forEach((item, i) => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.style.animationDelay = `${i * 40}ms`;
   card.innerHTML = `
-    <div class="icon">${item.id}</div>
-    <div class="label">${item.name}</div>
-    <div class="number">${item.category} in stock</div>
+    <div class="card-category">${item.category}</div>
+    <div class="card-name">${item.name}</div>
+    <div class="card-region">📍 ${item.region}</div>
+    <div class="card-tags">${item.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
   `;
-
   grid.appendChild(card);
 });
+}
+
+// ── Initial render ──
+renderGrid();
