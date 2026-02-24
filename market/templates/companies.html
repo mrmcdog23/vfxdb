@@ -4,10 +4,330 @@ Market Page
 {% endblock %}
 {% block content %}
 <h2>Welcome</h2>
-  <link rel="stylesheet" href="static/css/item.css">
+<style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0f0e;
+      --surface: #161a18;
+      --border: #2a3030;
+      --accent: #7effa0;
+      --accent2: #ff7e5f;
+      --text: #e8ede9;
+      --muted: #6b7c72;
+    }
+
+    body {
+      font-family: 'DM Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    header {
+      margin-bottom: 2.5rem;
+    }
+
+    header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    header p {
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin-top: 0.5rem;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── FILTER BAR ── */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .filter-bar label {
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .search-wrap {
+      position: relative;
+      flex: 1;
+      min-width: 180px;
+    }
+
+    .search-wrap svg {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+    }
+
+    #search {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.85rem;
+      padding: 0.55rem 0.75rem 0.55rem 2.25rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    #search:focus { border-color: var(--accent); }
+
+    .chip-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .chip {
+      cursor: pointer;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.3rem 0.85rem;
+      font-family: inherit;
+      font-size: 0.75rem;
+      background: transparent;
+      color: var(--muted);
+      transition: all 0.15s;
+    }
+
+    .chip:hover { border-color: var(--accent); color: var(--accent); }
+    .chip.active { background: var(--accent); border-color: var(--accent); color: #0d0f0e; font-weight: 500; }
+
+    .divider {
+      width: 1px;
+      height: 28px;
+      background: var(--border);
+    }
+
+    #results-count {
+      font-size: 0.75rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    #results-count span { color: var(--accent); }
+
+    /* ── GRID ── */
+    #grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      animation: fadeUp 0.25s ease both;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .card:hover { border-color: var(--accent); transform: translateY(-3px); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-category {
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent2);
+    }
+
+    .card-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      line-height: 1.2;
+    }
+
+    .card-region {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      margin-top: auto;
+    }
+
+    .tag {
+      font-size: 0.65rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+      background: #1f2a23;
+      color: var(--accent);
+      letter-spacing: 0.04em;
+    }
+
+    /* Empty state */
+    #empty {
+      display: none;
+      grid-column: 1/-1;
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--muted);
+    }
+
+    #empty svg { display: block; margin: 0 auto 1rem; }
+  </style>
+</head>
 <body>
-  <div class="grid-container" id="grid"></div>
-  <script src="static/js/company.js"></script>
+
+<header>
+  <h1>Species Explorer</h1>
+  <p>Browse and filter the collection</p>
+</header>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <!-- Search -->
+  <div class="search-wrap">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    <input id="search" type="text" placeholder="Search by name or tag…" />
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Category chips -->
+  <label>Category</label>
+  <div class="chip-group" id="category-chips"></div>
+
+  <div class="divider"></div>
+
+  <!-- Region chips -->
+  <label>Region</label>
+  <div class="chip-group" id="region-chips"></div>
+
+  <div class="divider"></div>
+
+  <div id="results-count"><span id="count">0</span> results</div>
+</div>
+
+<!-- GRID -->
+<div id="grid">
+  <div id="empty">
+    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    No results match your filters.
+  </div>
+</div>
+
+<!-- Load data -->
+<script src="static/js/company.js"></script>
+<script>
+  // ── State ──
+  let activeCategories = new Set();
+  let activeRegions    = new Set();
+  let searchQuery      = '';
+
+  // ── Build filter chips dynamically from data ──
+  const categories = [...new Set(items.map(i => i.category))];
+  const regions    = [...new Set(items.map(i => i.region))];
+
+  function buildChips(values, containerId, activeSet) {
+    const container = document.getElementById(containerId);
+    values.forEach(val => {
+      const btn = document.createElement('button');
+      btn.className = 'chip';
+      btn.textContent = val;
+      btn.addEventListener('click', () => {
+        if (activeSet.has(val)) { activeSet.delete(val); btn.classList.remove('active'); }
+        else                    { activeSet.add(val);    btn.classList.add('active');    }
+        renderGrid();
+      });
+      container.appendChild(btn);
+    });
+  }
+
+  buildChips(categories, 'category-chips', activeCategories);
+  buildChips(regions,    'region-chips',    activeRegions);
+
+  // ── Search input ──
+  document.getElementById('search').addEventListener('input', e => {
+    searchQuery = e.target.value.toLowerCase().trim();
+    renderGrid();
+  });
+
+  // ── Render ──
+  function renderGrid() {
+    const grid  = document.getElementById('grid');
+    const empty = document.getElementById('empty');
+
+    // Filter
+    const filtered = items.filter(item => {
+      const matchCat    = activeCategories.size === 0 || activeCategories.has(item.category);
+      const matchRegion = activeRegions.size    === 0 || activeRegions.has(item.region);
+      const matchSearch = !searchQuery ||
+        item.name.toLowerCase().includes(searchQuery) ||
+        item.tags.some(t => t.toLowerCase().includes(searchQuery));
+      return matchCat && matchRegion && matchSearch;
+    });
+
+    // Clear existing cards (keep empty state node)
+    [...grid.querySelectorAll('.card')].forEach(c => c.remove());
+
+    document.getElementById('count').textContent = filtered.length;
+
+    if (filtered.length === 0) {
+      empty.style.display = 'block';
+      return;
+    }
+
+    empty.style.display = 'none';
+
+    filtered.forEach((item, i) => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.style.animationDelay = `${i * 40}ms`;
+      card.innerHTML = `
+        <div class="card-category">${item.category}</div>
+        <div class="card-name">${item.name}</div>
+        <div class="card-region">📍 ${item.region}</div>
+        <div class="card-tags">${item.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  // ── Initial render ──
+  renderGrid();
+</script>
 </body>
 </html>
 
