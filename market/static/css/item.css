@@ -10,13 +10,7 @@
   --muted: #6b7c72;
 }
 
-body {
-  font-family: 'DM Mono', monospace;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  padding: 2rem;
-}
+
 
 header {
   margin-bottom: 2.5rem;

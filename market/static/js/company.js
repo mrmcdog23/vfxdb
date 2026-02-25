@@ -1,18 +1,23 @@
 // Data for grid items
 const items = [
-  { id: 1, name: "Arctic Fox", category: "animal", region: "Arctic", tags: ["mammal", "wild"] },
-  { id: 2, name: "Bonsai Tree", category: "plant", region: "Asia", tags: ["ornamental", "slow-growing"] },
+  { id: 1, name: "Arctic Fox", category: "animal", region: "Arctic", tags: ["mammal", "wild"], avatar: "freya-hewett.png", countries: ["france", "brazil"] },
+  { id: 2, name: "Bonsai Tree", category: "plant", region: "Asia", tags: ["ornamental", "slow-growing"], avatar: "georgia-chalkley.png" },
   { id: 3, name: "Monarch Butterfly", category: "insect", region: "Americas", tags: ["migratory", "colorful"] },
   { id: 4, name: "Snow Leopard", category: "animal", region: "Asia", tags: ["mammal", "endangered"] },
   { id: 5, name: "Venus Flytrap", category: "plant", region: "Americas", tags: ["carnivorous", "rare"] },
   { id: 6, name: "Firefly", category: "insect", region: "Americas", tags: ["bioluminescent", "nocturnal"] },
-  { id: 7, name: "Red Panda", category: "animal", region: "Asia", tags: ["mammal", "endangered"] },
+  { id: 7, name: "Red Panda", category: "animal", region: "Asia", tags: ["mammal", "endangered"], avatar: "tom-clapp.png" },
   { id: 8, name: "Baobab Tree", category: "plant", region: "Africa", tags: ["ancient", "iconic"] },
   { id: 9, name: "Morpho Butterfly", category: "insect", region: "Americas", tags: ["colorful", "tropical"] },
   { id: 10, name: "Arctic Wolf", category: "animal", region: "Arctic", tags: ["mammal", "predator"] },
   { id: 11, name: "Lotus", category: "plant", region: "Asia", tags: ["aquatic", "ornamental"] },
   { id: 12, name: "Praying Mantis", category: "insect", region: "Africa", tags: ["predator", "camouflage"] },
 ];
+
+const countries = [
+  { name: "France", flag: "🇫🇷" },
+];
+
 
 // ── State ──
 let activeCategories = new Set();
@@ -24,18 +29,26 @@ const categories = [...new Set(items.map(i => i.category))];
 const regions    = [...new Set(items.map(i => i.region))];
 
 function buildChips(values, containerId, activeSet) {
-const container = document.getElementById(containerId);
-values.forEach(val => {
-  const btn = document.createElement('button');
-  btn.className = 'chip';
-  btn.textContent = val;
-  btn.addEventListener('click', () => {
-    if (activeSet.has(val)) { activeSet.delete(val); btn.classList.remove('active'); }
-    else                    { activeSet.add(val);    btn.classList.add('active');    }
-    renderGrid();
+  const container = document.getElementById(containerId);
+  values.forEach(val => {
+    const btn = document.createElement('button');
+    btn.className = 'chip';
+    btn.textContent = val;
+    btn.addEventListener('click', () => {
+      if (activeSet.has(val))
+      {
+        activeSet.delete(val);
+        btn.classList.remove('active');
+      }
+      else
+      {
+        activeSet.add(val);
+        btn.classList.add('active');
+      }
+      renderGrid();
+    });
+    container.appendChild(btn);
   });
-  container.appendChild(btn);
-});
 }
 
 buildChips(categories, 'category-chips', activeCategories);
@@ -78,10 +91,20 @@ filtered.forEach((item, i) => {
   const card = document.createElement('div');
   card.className = 'card';
   card.style.animationDelay = `${i * 40}ms`;
+
+  // override the avatar if undefined
+  if (item.avatar == null) {
+    item.avatar = "default-avatar.png";}
+
+  // build the card html
   card.innerHTML = `
     <div class="card-category">${item.category}</div>
+    <div class="col">
+    <img  height="150px" width="150px" src="static/src/logos/${item.avatar}">
+    </div>
     <div class="card-name">${item.name}</div>
     <div class="card-region">📍 ${item.region}</div>
+    <img width="50px" src="static/src/flags/brazil.svg">
     <div class="card-tags">${item.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
   `;
   grid.appendChild(card);
