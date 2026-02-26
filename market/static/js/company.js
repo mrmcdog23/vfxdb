@@ -62,11 +62,47 @@ const cards = [
   countries: ["england"],
   webpage: "https://www.no8london.com"
   },
+  { id: 8,
+  name: "Red Knuckles",
+  category: "2014",
+  hq: "London",
+  avatar: "redknuckles.png",
+  tags: ["vfx"],
+  countries: ["england"],
+  webpage: "https://www.redknuckles.co.uk"
+  },
+  { id: 9,
+  name: "Flying Bark Productions",
+  category: "2004",
+  hq: "Sydney",
+  avatar: "flyingbark.png",
+  tags: ["vfx"],
+  countries: ["australia", "spain"],
+  webpage: "https://www.flyingbark.com.au"
+  },
+  { id: 10,
+  name: "The Third Floor",
+  category: "2005",
+  hq: "Los Angeles",
+  avatar: "thethirdfloor.png",
+  tags: ["previs"],
+  countries: ["usa", "china", "england"],
+  webpage: "https://www.thethirdfloorinc.com"
+  },
+  { id: 11,
+  name: "Skydance Animation",
+  category: "2015",
+  hq: "Los Angeles",
+  avatar: "skydance.png",
+  tags: ["animation", "post-production"],
+  countries: ["spain", "usa"],
+  webpage: "https://www.skydance.com"
+  },
 ];
 const items = cards.sort((a, b) => a.name.localeCompare(b.name));
 
 // ── State ──
-let activeCategories = new Set();
+let activeTags = new Set();
 let activeHQs    = new Set();
 let searchQuery      = '';
 
@@ -137,7 +173,7 @@ function populateCountryFilter(countries)
 }
 
 populateCountryFilter(countries);
-buildCompanyTypeFilters(categories, 'category-chips', activeCategories);
+buildCompanyTypeFilters(categories, 'category-chips', activeTags);
 
 // ── Search input ──
 document.getElementById('search').addEventListener('input', e => {
@@ -152,7 +188,7 @@ filterCountries.addEventListener('change', renderGrid);
 function renderGrid() {
     const grid  = document.getElementById('grid');
     const empty = document.getElementById('empty');
-    console.log(activeCategories)
+    console.log(activeTags)
     // Filter
     const filtered = items.filter(item => {
       const filterCountry = filterCountries.value;
@@ -161,7 +197,7 @@ function renderGrid() {
       // check for matching categories
       activeCompanyType = false;
       for (const tag of item.tags) {
-        if (activeCategories.has(tag))
+        if (activeTags.has(tag))
         {
            activeCompanyType = true;
            break;
@@ -169,7 +205,7 @@ function renderGrid() {
       };
       console.log(activeCompanyType)
 
-      const matchCat    = activeCategories.size === 0 || activeCompanyType;
+      const matchCat    = activeTags.size === 0 || activeCompanyType;
       const matchRegion = activeHQs.size    === 0 || activeHQs.has(item.hq);
       const matchSearch = !searchQuery ||
         item.name.toLowerCase().includes(searchQuery) ||
@@ -226,7 +262,7 @@ filtered.forEach((item, i) => {
     <img  height="150px" width="150px" src="static/src/logos/${item.avatar}">
     <div class="card-category">${item.category}</div>
     <div class="card-hq">📍 ${item.hq}</div>
-    <div class="card-website"><a href="https://example.com">https://example.com</a></div>
+    <div class="card-website"><a href=${item.webpage}>${item.webpage}</a></div>
     ${flags_html}
     <div class="card-tags">${item.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
   `;
