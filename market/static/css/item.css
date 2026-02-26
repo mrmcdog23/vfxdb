@@ -135,6 +135,8 @@ header p {
   gap: 0.6rem;
   animation: fadeUp 0.25s ease both;
   transition: border-color 0.2s, transform 0.2s;
+  justify-content: center;
+  align-items: center;
 }
 
 .card:hover { border-color: var(--accent); transform: translateY(-3px); }
@@ -157,10 +159,16 @@ header p {
   line-height: 1.2;
 }
 
-.card-region {
+.card-hq {
   font-size: 0.75rem;
   color: var(--muted);
 }
+
+.card-website {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
 
 .card-tags {
   display: flex;

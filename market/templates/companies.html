@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}
-Market Page
+Companies Page
 {% endblock %}
 {% block content %}
 <h2>Welcome</h2>
@@ -20,19 +20,14 @@ Market Page
   </div>
 
   <div class="divider"></div>
-
+  <label>Country</label>
   <select id="filterCountries"></select>
 
   <!-- Category chips -->
-  <label>Category</label>
+  <label>Company Type</label>
   <div class="chip-group" id="category-chips"></div>
 
-  <div class="divider"></div>
-
   <!-- Region chips -->
-  <label>Region</label>
-  <div class="chip-group" id="region-chips"></div>
-
   <div class="divider"></div>
 
   <div id="results-count"><span id="count">0</span> results</div>

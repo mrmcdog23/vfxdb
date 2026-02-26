@@ -1,35 +1,97 @@
 // Data for grid items
-const items = [
-  { id: 1, name: "Arctic Fox", category: "animal", region: "Arctic", tags: ["mammal", "wild"], avatar: "freya-hewett.png", countries: ["france", "brazil", "japan", "england"] },
-  { id: 2, name: "Bonsai Tree", category: "plant", region: "Asia", tags: ["ornamental", "slow-growing"], avatar: "georgia-chalkley.png", countries: [] },
-  { id: 3, name: "Monarch Butterfly", category: "insect", region: "Americas", tags: ["migratory", "colorful"], countries: [] },
-  { id: 4, name: "Snow Leopard", category: "animal", region: "Asia", tags: ["mammal", "endangered"], countries: [] },
-  { id: 5, name: "Venus Flytrap", category: "plant", region: "Americas", tags: ["carnivorous", "rare"] , countries: [] },
-  { id: 6, name: "Firefly", category: "insect", region: "Americas", tags: ["bioluminescent", "nocturnal"], countries: ["japan", "england"]},
-  { id: 7, name: "Red Panda", category: "animal", region: "Asia", tags: ["mammal", "endangered"], avatar: "tom-clapp.png", countries: [] },
-  { id: 8, name: "Baobab Tree", category: "plant", region: "Africa", tags: ["ancient", "iconic"] , countries: [] },
-  { id: 9, name: "Morpho Butterfly", category: "insect", region: "Americas", tags: ["colorful", "tropical"] , countries: [] },
-  { id: 10, name: "Arctic Wolf", category: "animal", region: "Arctic", tags: ["mammal", "predator"], countries: ["france", "brazil", "japan"], countries: [] },
-  { id: 11, name: "Lotus", category: "plant", region: "Asia", tags: ["aquatic", "ornamental"], countries: [] },
-  { id: 12, name: "Praying Mantis", category: "insect", region: "Africa", tags: ["predator", "camouflage"], countries: ["france"], countries: [] },
+const cards = [
+  { id: 1,
+  name: "Super Spline Studios",
+  category: "2016",
+  hq: "Leamington Spa",
+  avatar: "supersplinestudios.png",
+  tags: ["animation"],
+  countries: ["england"],
+  webpage: "https://www.supersplinestudios.com/"
+  },
+  { id: 2,
+  name: "Brown Bag Films",
+  category: "1994",
+  hq: "Dublin",
+  avatar: "brown_bag_films.png",
+  tags: ["animation"],
+  countries: ["ireland", "canada"],
+  webpage: "https://www.brownbagfilms.com/"
+  },
+  { id: 3,
+  name: "Golden Wolf",
+  category: "2013",
+  hq: "London",
+  avatar: "golden_wolf.png",
+  tags: ["animation"],
+  countries: ["england"]
+  },
+  { id: 4,
+  name: "Dneg",
+  category: "1988",
+  hq: "London",
+  avatar: "dneg.png",
+  tags: ["vfx", "animation", "previs"],
+  countries: ["england", "spain", "usa", "australia", "canada", "india"],
+  webpage: "https://www.dneg.com"
+  },
+  { id: 5,
+  name: "Framestore",
+  category: "1983",
+  hq: "London",
+  avatar: "framestore.png",
+  tags: ["vfx", "animation", "previs", "editing"],
+  countries: ["england", "usa", "australia", "canada", "india"],
+  webpage: "https://www.framestore.com"
+  },
+  { id: 6,
+  name: "Covert",
+  category: "2016",
+  hq: "London",
+  avatar: "covert.png",
+  tags: ["vfx"],
+  countries: ["england"],
+  webpage: "https://www.wearecovert.com"
+  },
+  { id: 7,
+  name: "No8",
+  category: "2022",
+  hq: "London",
+  avatar: "no8.png",
+  tags: ["vfx", "editing"],
+  countries: ["england"],
+  webpage: "https://www.no8london.com"
+  },
 ];
-
+const items = cards.sort((a, b) => a.name.localeCompare(b.name));
 
 // ── State ──
 let activeCategories = new Set();
-let activeRegions    = new Set();
+let activeHQs    = new Set();
 let searchQuery      = '';
 
 // ── Build filter chips dynamically from data ──
 const categories = [...new Set(items.map(i => i.category))];
-const regions    = [...new Set(items.map(i => i.region))];
+const headquarters = [...new Set(items.map(i => i.hq))];
 const countries = [...new Set(items.map(i => i.countries))];
+const all_tags = [...new Set(items.map(i => i.tags))];
 
 const filterCountries = document.getElementById("filterCountries");
 
-function buildChips(values, containerId, activeSet) {
+function buildCompanyTypeFilters(values, containerId, activeSet) {
+    // build the list of countries from the set
+    const tags_list = [];
+    all_tags.forEach(tags => {
+        tags.forEach(tag => {
+            if (!tags_list.includes(tag)) {
+                tags_list.push(tag);}
+            });
+        });
+    tags_list.sort();
+
+
   const container = document.getElementById(containerId);
-  values.forEach(val => {
+  tags_list.forEach(val => {
     const btn = document.createElement('button');
     btn.className = 'chip';
     btn.textContent = val;
@@ -75,8 +137,7 @@ function populateCountryFilter(countries)
 }
 
 populateCountryFilter(countries);
-buildChips(categories, 'category-chips', activeCategories);
-buildChips(regions,    'region-chips',    activeRegions);
+buildCompanyTypeFilters(categories, 'category-chips', activeCategories);
 
 // ── Search input ──
 document.getElementById('search').addEventListener('input', e => {
@@ -84,24 +145,37 @@ searchQuery = e.target.value.toLowerCase().trim();
 renderGrid();
 });
 
+// connect the countries filter
 filterCountries.addEventListener('change', renderGrid);
 
 // ── Render ──
 function renderGrid() {
-const grid  = document.getElementById('grid');
-const empty = document.getElementById('empty');
+    const grid  = document.getElementById('grid');
+    const empty = document.getElementById('empty');
+    console.log(activeCategories)
+    // Filter
+    const filtered = items.filter(item => {
+      const filterCountry = filterCountries.value;
+      const matchCountry = filterCountry === 'all' || item.countries.includes(filterCountry);
 
-// Filter
-const filtered = items.filter(item => {
-  const filterCountry = filterCountries.value;
-  const matchCountry = filterCountry === 'all' || item.countries.includes(filterCountry);
-  const matchCat    = activeCategories.size === 0 || activeCategories.has(item.category);
-  const matchRegion = activeRegions.size    === 0 || activeRegions.has(item.region);
-  const matchSearch = !searchQuery ||
-    item.name.toLowerCase().includes(searchQuery) ||
-    item.tags.some(t => t.toLowerCase().includes(searchQuery));
-  return matchCat && matchRegion && matchSearch && matchCountry;
-});
+      // check for matching categories
+      activeCompanyType = false;
+      for (const tag of item.tags) {
+        if (activeCategories.has(tag))
+        {
+           activeCompanyType = true;
+           break;
+        }
+      };
+      console.log(activeCompanyType)
+
+      const matchCat    = activeCategories.size === 0 || activeCompanyType;
+      const matchRegion = activeHQs.size    === 0 || activeHQs.has(item.hq);
+      const matchSearch = !searchQuery ||
+        item.name.toLowerCase().includes(searchQuery) ||
+        item.tags.some(t => t.toLowerCase().includes(searchQuery));
+      return matchCat && matchRegion && matchSearch && matchCountry;
+    });
 
 // Clear existing cards (keep empty state node)
 [...grid.querySelectorAll('.card')].forEach(c => c.remove());
@@ -148,12 +222,11 @@ filtered.forEach((item, i) => {
 
   // build the card html
   card.innerHTML = `
-    <div class="card-category">${item.category}</div>
-    <div class="col">
-    <img  height="150px" width="150px" src="static/src/logos/${item.avatar}">
-    </div>
     <div class="card-name">${item.name}</div>
-    <div class="card-region">📍 ${item.region}</div>
+    <img  height="150px" width="150px" src="static/src/logos/${item.avatar}">
+    <div class="card-category">${item.category}</div>
+    <div class="card-hq">📍 ${item.hq}</div>
+    <div class="card-website"><a href="https://example.com">https://example.com</a></div>
     ${flags_html}
     <div class="card-tags">${item.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
   `;
