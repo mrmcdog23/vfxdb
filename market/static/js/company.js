@@ -25,6 +25,7 @@ const categories = [...new Set(items.map(i => i.category))];
 const regions    = [...new Set(items.map(i => i.region))];
 const countries = [...new Set(items.map(i => i.countries))];
 
+const filterCountries = document.getElementById("filterCountries");
 
 function buildChips(values, containerId, activeSet) {
   const container = document.getElementById(containerId);
@@ -49,25 +50,27 @@ function buildChips(values, containerId, activeSet) {
   });
 }
 
+// get a list of all countries and sort it
+// then add to the select filter box
 function populateCountryFilter(countries)
     {
-    const all_countries = [];
+
+    // build the list of countries from the set
+    const all_countries = ["all"];
     countries.forEach(item => {
         item.forEach(country => {
-            if (!all_countries.includes(country))
-                {
-                all_countries.push(country);
-                }
+            if (!all_countries.includes(country)) {
+                all_countries.push(country);}
             });
         });
     all_countries.sort();
 
-    const select = document.getElementById("filterCountries");
+    // add all the countries to the combo box
     all_countries.forEach(place => {
         const option = document.createElement("option");
         option.value = place.toLowerCase();
         option.textContent = place;
-        select.appendChild(option);
+        filterCountries.appendChild(option);
     });
 }
 
@@ -81,6 +84,8 @@ searchQuery = e.target.value.toLowerCase().trim();
 renderGrid();
 });
 
+filterCountries.addEventListener('change', renderGrid);
+
 // ── Render ──
 function renderGrid() {
 const grid  = document.getElementById('grid');
@@ -88,12 +93,14 @@ const empty = document.getElementById('empty');
 
 // Filter
 const filtered = items.filter(item => {
+  const filterCountry = filterCountries.value;
+  const matchCountry = filterCountry === 'all' || item.countries.includes(filterCountry);
   const matchCat    = activeCategories.size === 0 || activeCategories.has(item.category);
   const matchRegion = activeRegions.size    === 0 || activeRegions.has(item.region);
   const matchSearch = !searchQuery ||
     item.name.toLowerCase().includes(searchQuery) ||
     item.tags.some(t => t.toLowerCase().includes(searchQuery));
-  return matchCat && matchRegion && matchSearch;
+  return matchCat && matchRegion && matchSearch && matchCountry;
 });
 
 // Clear existing cards (keep empty state node)
