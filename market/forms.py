@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, HiddenField
+from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import Length, EqualTo, Email, DataRequired, ValidationError
 from market.models import User
+from flask_wtf.file import FileField, FileRequired
 
 
 class RegisterForm(FlaskForm):
@@ -19,6 +20,10 @@ class RegisterForm(FlaskForm):
     email_address = StringField(label='Email Address:', validators=[Email(), DataRequired()])
     password1 = PasswordField(label='Password:', validators=[Length(min=6), DataRequired()])
     password2 = PasswordField(label='Confirm Password:', validators=[EqualTo('password1'), DataRequired()])
+    profile_pic = FileField('Upload File', validators=[
+        FileRequired()
+    ])
+
     submit = SubmitField(label='Create Account')
 
 

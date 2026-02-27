@@ -6,7 +6,7 @@
 {% block content %}
 <body class="text-center">
     <div class="container">
-        <form method="POST" class="form-register" style="color:white">
+        <form method="POST" class="form-register" enctype="multipart/form-data" style="color:white">
             {{ form.hidden_tag() }}
             <img class="mb-4" src="https://res.cloudinary.com/jimshapedcoding/image/upload/v1597332609/android-icon-192x192_ove2a7.png" alt="">
             <h1 class="h3 mb-3 font-weight-normal">
@@ -25,6 +25,8 @@
             {{ form.password2.label() }}
             {{ form.password2(class="form-control", placeholder="Confirm Password") }}
 
+            {{ form.profile_pic.label() }}
+            {{ form.profile_pic(class="form-control", placeholder="Select Profile Pic") }}
             <br>
 
             <div class="checkbox mb-3">

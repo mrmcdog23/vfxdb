@@ -1,3 +1,4 @@
+import os
 from market import db, app
 from market.models import Item, User
 from market.forms import RegisterForm, LoginForm, PurchaseItemForm, SellItemForm
@@ -49,16 +50,26 @@ def market_page():
 def register_page():
     form = RegisterForm()
     if form.validate_on_submit():
-        db.create_all()
+        # Save image
+        file_data = form.profile_pic.data
+        filename = file_data.filename
+        file_data.save(os.path.join("/home/joeleveson/Downloads", filename))
+
+        flash(f'File "{filename}" uploaded successfully!')
         user_to_create = User(username=form.username.data,
                               email_address=form.email_address.data,
-                              password=form.password1.data)
+                              password=form.password1.data,
+                              profile_pic=filename
+                              )
         db.session.add(user_to_create)
         db.session.commit()
         login_user(user_to_create)
         flash(f"Account created successfully! You are now logged in as {user_to_create.username}", category='success')
         return redirect(url_for('market_page'))
     if form.errors != {}: #If there are not errors from the validations
+        for k, v in form.errors.items():
+            print(f"validated with {k} -> {v}")
+
         for err_msg in form.errors.values():
             flash(f'There was an error with creating a user: {err_msg}', category='danger')
 
