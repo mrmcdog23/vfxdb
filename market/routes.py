@@ -1,14 +1,15 @@
-from market import app
-from flask import render_template, redirect, url_for, flash, request, jsonify
+from market import db, app
 from market.models import Item, User
 from market.forms import RegisterForm, LoginForm, PurchaseItemForm, SellItemForm
-from market import db
+from flask import render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
+
 
 @app.route('/')
 @app.route('/home')
 def home_page():
     return render_template('home.html')
+
 
 @app.route('/market', methods=['GET', 'POST'])
 @login_required
@@ -43,10 +44,12 @@ def market_page():
         owned_items = Item.query.filter_by(owner=current_user.id)
         return render_template('market.html', items=items, purchase_form=purchase_form, owned_items=owned_items, selling_form=selling_form)
 
+
 @app.route('/register', methods=['GET', 'POST'])
 def register_page():
     form = RegisterForm()
     if form.validate_on_submit():
+        db.create_all()
         user_to_create = User(username=form.username.data,
                               email_address=form.email_address.data,
                               password=form.password1.data)
@@ -60,6 +63,7 @@ def register_page():
             flash(f'There was an error with creating a user: {err_msg}', category='danger')
 
     return render_template('register.html', form=form)
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login_page():
@@ -76,6 +80,7 @@ def login_page():
             flash('Username and password are not match! Please try again', category='danger')
 
     return render_template('login.html', form=form)
+
 
 @app.route('/logout')
 def logout_page():
@@ -101,11 +106,4 @@ def people():
 @app.route('/companies')
 def companies_page():
     return render_template('companies.html')
-
-
-
-
-
-
-
 

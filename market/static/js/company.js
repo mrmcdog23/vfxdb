@@ -243,8 +243,6 @@ function createImageGrid(countries, perRow = 4) {
 }
 
 
-
-
 filtered.forEach((item, i) => {
   const card = document.createElement('div');
   card.className = 'card';

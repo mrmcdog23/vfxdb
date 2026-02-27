@@ -57,3 +57,8 @@ class Item(db.Model):
         self.owner = None
         user.budget += self.price
         db.session.commit()
+
+
+from market import app
+with app.app_context():
+    db.create_all()
