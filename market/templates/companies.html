@@ -6,9 +6,16 @@ Companies Page
 <link rel="stylesheet" href="static/css/item.css">
 
 
+
+<head>
+  <meta charset="UTF-8">
+  <!-- SOURCE the external JS file here -->
+  <script src="static/js/create_company.js" defer></script>
+</head>
+
 <!-- FILTER BAR -->
 <div class="filter-bar">
-  <button class="btn-create" data-toggle="modal" data-target="#insert_book">
+  <button class="btn-create" onclick="openModal()">
     <span class="btn-icon">
       <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M6 1V11M1 6H11" stroke="#0e0e10" stroke-width="2" stroke-linecap="round"/>
@@ -17,42 +24,23 @@ Companies Page
     <span class="btn-label">Create New</span>
   </button>
 
-  <div class="modal fade" id="insert_book" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
-      <div class="modal-dialog">
-          <div class="modal-content">
-              <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                  <h4 class="modal-title" id="myModalLabel">Add a book</h4>
-              </div>
-              <form action="{{url_for('add_book')}}" method="post">
-                  <div class="modal-body">
-                      <div class="form-group row">
-                          <label for="author" class="col-xs-2 control-label">Author</label>
-                          <div class="col-xs-10">
-                              <input type="text" id="author" class="form-control" name="author" placeholder="Author" />
-                          </div>
-                      </div>
-                      <div class="form-group row">
-                          <label for="author" class="col-xs-2 control-label">Title</label>
-                          <div class="col-xs-10">
-                              <input type="text" class="form-control" name="title" placeholder="Title" />
-                          </div>
-                      </div>
-                      <div class="form-group row">
-                          <label for="author" class="col-xs-2 control-label">Price</label>
-                          <div class="col-xs-10">
-                              <input type="number" class="form-control" name="price" placeholder="Price" />
-                          </div>
-                      </div>
-                  </div>
-                  <div class="modal-footer">
-                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                      <button type="submit" class="btn btn-success">Submit</button>
-                  </div>
-              </form>
-          </div>
-      </div>
-  </div>
+    <!-- Modal -->
+    <div id="myModal" class="modal-dialog">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3>Contact Form</h3>
+
+            <form method="POST" action="/submit">
+                <label>Name:</label><br>
+                <input type="text" name="name" required><br><br>
+
+                <label>Email:</label><br>
+                <input type="email" name="email" required><br><br>
+
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
 
   <span class="filter-label">Filter</span>
 
