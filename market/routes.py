@@ -53,23 +53,21 @@ def register_page():
         # Save image
         file_data = form.profile_pic.data
         filename = file_data.filename
-        file_data.save(os.path.join("/home/joeleveson/Downloads", filename))
+        file_data.save(os.path.join(app.config['UPLOAD_FOLDER'], file_data.filename))
 
         flash(f'File "{filename}" uploaded successfully!')
-        user_to_create = User(username=form.username.data,
-                              email_address=form.email_address.data,
-                              password=form.password1.data,
-                              profile_pic=filename
-                              )
+        user_to_create = User(
+            username=form.username.data,
+            email_address=form.email_address.data,
+            password=form.password1.data,
+            profile_pic=filename
+        )
         db.session.add(user_to_create)
         db.session.commit()
         login_user(user_to_create)
         flash(f"Account created successfully! You are now logged in as {user_to_create.username}", category='success')
         return redirect(url_for('market_page'))
-    if form.errors != {}: #If there are not errors from the validations
-        for k, v in form.errors.items():
-            print(f"validated with {k} -> {v}")
-
+    if form.errors != {}: # If there are not errors from the validations
         for err_msg in form.errors.values():
             flash(f'There was an error with creating a user: {err_msg}', category='danger')
 
