@@ -114,6 +114,7 @@ const all_tags = [...new Set(items.map(i => i.tags))];
 
 const filterCountries = document.getElementById("filterCountries");
 
+
 function buildCompanyTypeFilters(values, containerId, activeSet) {
     // build the list of countries from the set
     const tags_list = [];
@@ -124,7 +125,6 @@ function buildCompanyTypeFilters(values, containerId, activeSet) {
             });
         });
     tags_list.sort();
-
 
   const container = document.getElementById(containerId);
   tags_list.forEach(val => {
@@ -147,6 +147,7 @@ function buildCompanyTypeFilters(values, containerId, activeSet) {
     container.appendChild(btn);
   });
 }
+
 
 // get a list of all countries and sort it
 // then add to the select filter box
@@ -183,6 +184,7 @@ renderGrid();
 
 // connect the countries filter
 filterCountries.addEventListener('change', renderGrid);
+
 
 // ── Render ──
 function renderGrid() {

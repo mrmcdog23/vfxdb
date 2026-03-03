@@ -4,9 +4,23 @@ Companies Page
 {% endblock %}
 {% block content %}
 <link rel="stylesheet" href="static/css/item.css">
-<body>
+
+<head>
+  <meta charset="UTF-8">
+  <!-- SOURCE the external JS file here -->
+  <script src="static/js/create_company.js" defer></script>
+</head>
+
 <!-- FILTER BAR -->
 <div class="filter-bar">
+  <button class="btn-create" onclick="doSomething()">
+    <span class="btn-icon">
+      <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M6 1V11M1 6H11" stroke="#0e0e10" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </span>
+    <span class="btn-label">Create New</span>
+  </button>
 
   <span class="filter-label">Filter</span>
 
@@ -45,6 +59,5 @@ Companies Page
 <!-- Load data -->
 <script src="static/js/company.js"></script>
 </body>
-</html>
 
 {% endblock %}

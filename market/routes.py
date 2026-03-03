@@ -116,3 +116,34 @@ def people():
 def companies_page():
     return render_template('companies.html')
 
+
+@app.route("/submit", methods=["POST"])
+def submit():
+    name = request.form.get("name", "").strip()
+    email = request.form.get("email", "").strip()
+    message = request.form.get("message", "").strip()
+
+    errors = []
+    if not name:
+        errors.append("Name is required.")
+    if not email or "@" not in email:
+        errors.append("A valid email is required.")
+    if not message:
+        errors.append("Message is required.")
+
+    if errors:
+        # Return JSON for AJAX, or redirect for plain form POST
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            return jsonify({"success": False, "errors": errors}), 400
+        for e in errors:
+            flash(e, "error")
+        return redirect(url_for("index"))
+
+    submissions.append({"name": name, "email": email, "message": message})
+
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+        return jsonify({"success": True, "message": f"Thanks, {name}! We'll be in touch."})
+
+    flash(f"Thanks, {name}! Your message was received.", "success")
+    return redirect(url_for("index"))
+
