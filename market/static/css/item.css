@@ -299,3 +299,47 @@ select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px
   position: relative;
   z-index: 1;
 }
+
+
+/* Background overlay */
+.modal {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 60px 20px;
+}
+
+.showing {
+    display: flex;
+}
+
+/* Modal box */
+.modal-content {
+    background: white;
+    padding: 25px;
+    border-radius: 8px;
+    width: 320px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.close {
+    float: right;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+button {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+input {
+    width: 100%;
+    padding: 6px;
+    margin-top: 4px;
+    margin-bottom: 12px;
+}

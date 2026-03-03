@@ -117,27 +117,11 @@ def companies_page():
     return render_template('companies.html')
 
 
-@app.route('/add_book', methods=['POST'])
-def add_book():
-    print("wanker!!!!")
-    price = request.form.get('price')
-    print (price)
 
-    '''
-    if not request.form:
-        return
+@app.route("/submit", methods=["POST"])
+def submit():
+    name = request.form.get("name")
+    email = request.form.get("email")
 
-    title=request.form.get('title')
-    author=request.form.get('author')
-    price=request.form.get('price')
-
-    book = Book(
-        title=request.form.get('title'),
-        author=request.form.get('author'),
-        price=request.form.get('price')
-    )
-    db.session.add(book)
-    db.session.commit()
-    return redirect(url_for("index"))
-    '''
-    return redirect(url_for('companies_page'))
+    flash(f"Received: {name} - {email}")
+    return redirect(url_for("companies_page"))

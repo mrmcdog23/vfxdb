@@ -5,10 +5,12 @@
 
 function openModal() {
     document.getElementById("myModal").style.display = "block";
+    document.getElementById("myModal").classList.add("showing");
 }
 
 function closeModal() {
     document.getElementById("myModal").style.display = "none";
+    document.getElementById("myModal").classList.remove("showing");
 }
 
 // Close modal if user clicks outside
