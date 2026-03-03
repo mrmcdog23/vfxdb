@@ -117,33 +117,27 @@ def companies_page():
     return render_template('companies.html')
 
 
-@app.route("/submit", methods=["POST"])
-def submit():
-    name = request.form.get("name", "").strip()
-    email = request.form.get("email", "").strip()
-    message = request.form.get("message", "").strip()
+@app.route('/add_book', methods=['POST'])
+def add_book():
+    print("wanker!!!!")
+    price = request.form.get('price')
+    print (price)
 
-    errors = []
-    if not name:
-        errors.append("Name is required.")
-    if not email or "@" not in email:
-        errors.append("A valid email is required.")
-    if not message:
-        errors.append("Message is required.")
+    '''
+    if not request.form:
+        return
 
-    if errors:
-        # Return JSON for AJAX, or redirect for plain form POST
-        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
-            return jsonify({"success": False, "errors": errors}), 400
-        for e in errors:
-            flash(e, "error")
-        return redirect(url_for("index"))
+    title=request.form.get('title')
+    author=request.form.get('author')
+    price=request.form.get('price')
 
-    submissions.append({"name": name, "email": email, "message": message})
-
-    if request.headers.get("X-Requested-With") == "XMLHttpRequest":
-        return jsonify({"success": True, "message": f"Thanks, {name}! We'll be in touch."})
-
-    flash(f"Thanks, {name}! Your message was received.", "success")
+    book = Book(
+        title=request.form.get('title'),
+        author=request.form.get('author'),
+        price=request.form.get('price')
+    )
+    db.session.add(book)
+    db.session.commit()
     return redirect(url_for("index"))
-
+    '''
+    return redirect(url_for('companies_page'))
